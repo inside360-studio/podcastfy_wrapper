@@ -63,7 +63,6 @@ async def generate_podcast_file(request: UserPodcastRequest):
             tts_model=generate_request.tts_model,
             conversation_config=generate_request.conversation_config.dict(),
             longform=generate_request.longform,
-            transcript_only=not request.generate_audio
         )
         
         print(f"=== Generated output file: {output_file} ===")

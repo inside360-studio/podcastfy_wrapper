@@ -6,12 +6,12 @@ class VoiceConfig(BaseModel):
     answer: str    # Voice ID for answers (e.g., "echo")
 
 class UserPodcastRequest(BaseModel):
-    generate_podcast: bool
     stream_output: bool = False  # Whether to stream the output or download as attachment
     google_key: str
     openai_key: str
     elevenlabs_key: str
     urls: List[str]
+    text: str
     name: str
     tagline: str
     creativity: float
@@ -32,6 +32,7 @@ class UserPodcastRequest(BaseModel):
         """
         return GeneratePodcastRequest(
             urls=self.urls,
+            text=self.text,
             tts_model=self.tts_model,
             longform=self.is_long_form,
             conversation_config=ConversationConfig(
