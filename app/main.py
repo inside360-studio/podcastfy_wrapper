@@ -113,7 +113,7 @@ async def generate_transcript(request: UserPodcastRequest):
         print(f"Podcast Name: {request.name}")
         
         # Set API keys in environment
-        os.environ["GOOGLE_API_KEY"] = request.google_key
+        os.environ["GEMINI_API_KEY"] = request.google_key
         os.environ["OPENAI_API_KEY"] = request.openai_key
         os.environ["ELEVENLABS_API_KEY"] = request.elevenlabs_key
         
