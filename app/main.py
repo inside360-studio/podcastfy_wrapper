@@ -38,7 +38,7 @@ app = FastAPI(title="Podcastfy API")
 @app.post("/generate-podcast")
 async def generate_podcast_file(request: UserPodcastRequest):
     """
-    This endpoint generates a podcast file using Podcastfy's generate_podcast function.
+    This endpoint generates a podcast audio file using Podcastfy's generate_podcast function.
     It accepts a user-friendly JSON payload and transforms it into the format expected by generate_podcast.
     """
     try:
@@ -48,14 +48,14 @@ async def generate_podcast_file(request: UserPodcastRequest):
         print(f"TTS Model: {request.tts_model}")
         
         # Set API keys in environment
-        os.environ["GOOGLE_API_KEY"] = request.google_key
+        os.environ["GEMINI_API_KEY"] = request.google_key
         os.environ["OPENAI_API_KEY"] = request.openai_key
         os.environ["ELEVENLABS_API_KEY"] = request.elevenlabs_key
         
         # Transform to generate_podcast format
         generate_request = request.to_generate_podcast_request()
         
-        # Generate podcast or transcript
+        # Generate podcast audio
         output_file = generate_podcast(
             text=generate_request.text,
             urls=generate_request.urls,
@@ -69,31 +69,12 @@ async def generate_podcast_file(request: UserPodcastRequest):
         
         if not os.path.exists(output_file):
             print(f"Error: File not found at {output_file}")
-            raise HTTPException(status_code=404, detail="Generated file not found")
+            raise HTTPException(status_code=404, detail="Generated audio file not found")
         
-        # If transcript was requested and return_transcript is true, return the text content
-        if not request.generate_audio and request.return_transcript:
-            try:
-                content = read_file_content(output_file)
-                return {"transcript": content}
-            except UnicodeDecodeError as e:
-                print(f"Error reading transcript: {str(e)}")
-                raise HTTPException(
-                    status_code=500,
-                    detail="Error reading transcript: Unsupported file encoding"
-                )
-            except Exception as e:
-                print(f"Error reading transcript: {str(e)}")
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Error reading transcript: {str(e)}"
-                )
-        
-        # Otherwise return the file (audio or transcript) as a response
-        media_type = "audio/mpeg" if request.generate_audio else "text/plain"
+        # Return the audio file as a response
         return FileResponse(
             output_file,
-            media_type=media_type,
+            media_type="audio/mpeg",
             filename=os.path.basename(output_file),
             content_disposition_type="inline" if request.stream_output else "attachment"
         )
