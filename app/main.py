@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 import os
 from typing import List
 from .models import GeneratePodcastRequest, UserPodcastRequest
-from podcastfy.client import generate_podcast
+from podcastfy_lib.podcastfy.client import generate_podcast
 
 def read_file_content(file_path: str) -> str:
     """

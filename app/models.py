@@ -42,6 +42,7 @@ class UserPodcastRequest(BaseModel):
                 podcast_tagline=self.tagline,
                 creativity=self.creativity,
                 user_instructions=self.user_instructions,
+                output_language=self.output_language,
                 text_to_speech={
                     "voices": self.voices.dict(),
                     "engagement_techniques": self.engagement_techniques,
@@ -60,6 +61,7 @@ class ConversationConfig(BaseModel):
     creativity: Optional[float] = 1.0    # Creativity level for conversation
     user_instructions: Optional[str] = None # Special instructions for conversation style
     text_to_speech: Optional[Dict[str, Any]] = None  # TTS configuration settings
+    output_language: Optional[str] = "German"  # Language for the output podcast
 
 class PodcastResponse(BaseModel):
     path: str  # Local file system path where the podcast is stored
@@ -77,3 +79,4 @@ class GeneratePodcastRequest(BaseModel):
     tts_model: Optional[str] = "openai"  # Text-to-speech model to use (default: OpenAI)
     conversation_config: Optional[ConversationConfig] = None  # Configuration settings for conversation style and structure
     longform: bool = False  # Flag to indicate if the podcast should be generated in longform format
+    output_language: Optional[str] = "German"  # Language for the output podcast
