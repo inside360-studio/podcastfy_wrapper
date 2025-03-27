@@ -31,8 +31,6 @@ def read_file_content(file_path: str) -> str:
         f"Unable to read file {file_path} with any of these encodings: {encodings}"
     )
 
-print("THIS IS THE CORRECT MAIN FILE")
-
 app = FastAPI(title="Podcastfy API")
 
 @app.post("/generate-podcast")
@@ -50,7 +48,9 @@ async def generate_podcast_file(request: UserPodcastRequest):
         # Set API keys in environment
         os.environ["GEMINI_API_KEY"] = request.google_key
         os.environ["OPENAI_API_KEY"] = request.openai_key
-        os.environ["ELEVENLABS_API_KEY"] = request.elevenlabs_key
+        # Only set ElevenLabs API key if it's provided
+        if request.elevenlabs_key:
+            os.environ["ELEVENLABS_API_KEY"] = request.elevenlabs_key
         
         # Transform to generate_podcast format
         generate_request = request.to_generate_podcast_request()

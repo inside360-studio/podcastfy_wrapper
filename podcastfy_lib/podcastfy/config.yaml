@@ -52,7 +52,7 @@ website_extractor:
   timeout: 10  # Request timeout in seconds
 
 text_to_speech:
-  default_tts_model: "elevenlabs"
+  default_tts_model: "openai"
   elevenlabs:
     default_voices:
       question: "Lucy Fennek"

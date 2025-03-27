@@ -9,7 +9,7 @@ class UserPodcastRequest(BaseModel):
     stream_output: bool = False  # Whether to stream the output or download as attachment
     google_key: str
     openai_key: str
-    elevenlabs_key: str
+    elevenlabs_key: Optional[str] = None
     urls: List[str]
     text: str
     name: str
@@ -24,7 +24,7 @@ class UserPodcastRequest(BaseModel):
     engagement_techniques: List[str]
     user_instructions: str
     output_language: str
-    voices: VoiceConfig
+    voices: Optional[VoiceConfig] = None
 
     def to_generate_podcast_request(self) -> 'GeneratePodcastRequest':
         """
@@ -44,7 +44,7 @@ class UserPodcastRequest(BaseModel):
                 user_instructions=self.user_instructions,
                 output_language=self.output_language,
                 text_to_speech={
-                    "voices": self.voices.dict(),
+                    "voices": self.voices.dict() if self.voices else None,
                     "engagement_techniques": self.engagement_techniques,
                     "conversation_style": self.conversation_style,
                     "dialogue_structure": self.dialogue_structure,
