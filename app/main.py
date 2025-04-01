@@ -1,9 +1,24 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.responses import FileResponse
+from fastapi.security import APIKeyQuery
 import os
 from typing import List
 from .models import GeneratePodcastRequest, UserPodcastRequest
 from podcastfy_lib.podcastfy.client import generate_podcast
+
+# Define API key (in production, this should be in a secure environment variable)
+API_KEY = "tZmH2qv4PwjbXl0Ks6D8YrE3nRdCzT5oBfGaIuVxL9Jy"
+api_key_query = APIKeyQuery(name="api-key", auto_error=False)
+
+# Create a dependency to validate the API key
+async def get_api_key(api_key: str = Depends(api_key_query)):
+    if api_key != API_KEY:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid API key",
+            headers={"WWW-Authenticate": "ApiKey"},
+        )
+    return api_key
 
 def read_file_content(file_path: str) -> str:
     """
@@ -31,9 +46,12 @@ def read_file_content(file_path: str) -> str:
         f"Unable to read file {file_path} with any of these encodings: {encodings}"
     )
 
-app = FastAPI(title="Podcastfy API")
+app = FastAPI(
+    title="Podcastfy API",
+    description="API for generating podcasts with API key protection",
+)
 
-@app.post("/generate-podcast")
+@app.post("/generate-podcast", dependencies=[Depends(get_api_key)])
 async def generate_podcast_file(request: UserPodcastRequest):
     """
     This endpoint generates a podcast audio file using Podcastfy's generate_podcast function.
@@ -82,7 +100,7 @@ async def generate_podcast_file(request: UserPodcastRequest):
         print(f"=== Error occurred: {str(e)} ===")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/generate-transcript")
+@app.post("/generate-transcript", dependencies=[Depends(get_api_key)])
 async def generate_transcript(request: UserPodcastRequest):
     """
     This endpoint generates a transcript using Podcastfy's generate_podcast function.
@@ -139,7 +157,7 @@ async def generate_transcript(request: UserPodcastRequest):
         print(f"=== Error occurred: {str(e)} ===")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/audio/{file_path:path}")
+@app.get("/audio/{file_path:path}", dependencies=[Depends(get_api_key)])
 async def download_file(file_path: str):
     """
     This endpoint allows downloading a generated file by its path.
