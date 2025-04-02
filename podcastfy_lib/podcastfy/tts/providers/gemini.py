@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class GeminiTTS(TTSProvider):
     """Google Cloud Text-to-Speech provider for single speaker."""
     
-    def __init__(self, api_key: str = None, model: str = "en-US-Journey-F"):
+    def __init__(self, api_key: str = None, model: str = os.getenv("GEMINI_MODEL", "en-US-Studio-MultiSpeaker")):
         """
         Initialize Google Cloud TTS provider.
         
