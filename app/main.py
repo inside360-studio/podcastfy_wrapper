@@ -4,7 +4,7 @@ from fastapi.security import APIKeyQuery
 import os
 from typing import List
 from .models import GeneratePodcastRequest, UserPodcastRequest
-from podcastfy_lib.podcastfy.client import generate_podcast
+from podcastfy.client import generate_podcast
 
 # Define API key (in production, this should be in a secure environment variable)
 API_KEY = "tZmH2qv4PwjbXl0Ks6D8YrE3nRdCzT5oBfGaIuVxL9Jy"
